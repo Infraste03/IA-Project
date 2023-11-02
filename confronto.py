@@ -110,7 +110,6 @@ print("Standard deviation: ", np.std(scores)) """
 ############RANDOM FOREST######################
 
 print("MODELLO Random Forest")
-from sklearn.metrics import r2_score
 
 # The above code is creating a random forest regression model using the RandomForestRegressor class
 # from the scikit-learn library in Python. The model is being initialized with the following
@@ -324,8 +323,6 @@ for model in models:
     print("Mean score: {:.4f}".format(mean_score))
     print("Test score: {:.4f}".format(test_score))
     
-    ###devo fare il plot anche qui!!!!
-
 
 
 #######PER LA RETE NEURALE#########
