@@ -1,0 +1,101 @@
+info dataset train:
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 197 entries, 0 to 196
+Data columns (total 63 columns):
+ #   Column                         Non-Null Count  Dtype  
+---  ------                         --------------  -----  
+ 0   Codice alfa numerico           197 non-null    object 
+ 1   Età                            197 non-null    float64
+ 2   Peso                           197 non-null    float64
+ 3   Altezza                        197 non-null    float64
+ 4   BMI                            197 non-null    float64
+ 5   Catetere vescicale             197 non-null    float64
+ 6   CVC                            197 non-null    float64
+ 7   Fumo                           197 non-null    float64
+ 8   OSAS                           197 non-null    float64
+ 9   Pregressa polmonite(>30 gg)    197 non-null    float64
+ 10  BPCO                           197 non-null    float64
+ 11  Ipertensione arteriosa         197 non-null    float64
+ 12  Cardiopatia ischemica cronica  197 non-null    float64
+ 13  Pregresso infarto miocardio    197 non-null    float64
+ 14  Pregresso SCC                  197 non-null    float64
+ 15  Aritmie                        197 non-null    float64
+ 16  Ictus                          197 non-null    float64
+ 17  Pregresso TIA                  197 non-null    float64
+ 18  Altro_comorbidita              197 non-null    float64
+ 19  Antipertensivi                 197 non-null    float64
+ 20  Broncodilatatori               197 non-null    float64
+ 21  Antiaritmici                   197 non-null    float64
+ 22  Anticoagulanti                 197 non-null    float64
+ 23  Antiaggreganti                 197 non-null    float64
+ 24  TIGO                           197 non-null    float64
+ 25  Insulina                       197 non-null    float64
+ 26  Altro_terapia                  197 non-null    float64
+ 27  Reintervento                   197 non-null    float64
+ 28  Lateralit�                     197 non-null    float64
+ 29  Tempo Tot BO Ormaweb           197 non-null    float64
+ 30  Tempo Tot. SO OrmaWeb          197 non-null    float64
+ 31  Tempo Tot. RR                  197 non-null    float64
+ 32  Numero chirurghi               197 non-null    float64
+ 33  Specializzando chirurgia       197 non-null    int64  
+ 34  Numero anestesisti             197 non-null    float64
+ 35  Cambio anestesisti             197 non-null    float64
+ 36  Specializzando anestesia       197 non-null    float64
+ 37  feasible                       197 non-null    bool   
+ 38  BLE_tot_BO_time                197 non-null    float64
+ 39  BLE_tot_OR_time                197 non-null    float64
+ 40  BLE_tot_RR_time                197 non-null    float64
+ 41  ASA_2.0                        197 non-null    float64
+ 42  ASA_3.0                        197 non-null    float64
+ 43  ASA_1.0                        197 non-null    float64
+ 44  ASA_4.0                        197 non-null    float64
+ 45  MALLAMPATI_1.0                 197 non-null    float64
+ 46  MALLAMPATI_2.0                 197 non-null    float64
+ 47  MALLAMPATI_3.0                 197 non-null    float64
+ 48  MALLAMPATI_4.0                 197 non-null    float64
+ 49  LAPAROSCOPIA                   197 non-null    float64
+ 50  OPEN                           197 non-null    float64
+ 51  ROBOTICA                       197 non-null    float64
+ 52  ENDOSCOPIA                     197 non-null    float64
+ 53  TORACOSCOPIA                   197 non-null    float64
+ 54  PERCUTANEO                     197 non-null    float64
+ 55  MIVAR                          197 non-null    float64
+ 56  LATERALITA_NESSUNA             197 non-null    float64
+ 57  LATERALITA_SINISTRA            197 non-null    float64
+ 58  LATERALITA_DESTRA              197 non-null    float64
+ 59  LATERALITA_BILATERALE          197 non-null    float64
+ 60  DIABETE_MELLITO_2              197 non-null    float64
+ 61  DIABETE_MELLITO_1              197 non-null    float64
+ 62  PROCEDURE_TOTALI               197 non-null    float64
+dtypes: bool(1), float64(60), int64(1), object(1)
+memory usage: 95.7+ KB
+None
+
+Value counts for 'BLE_tot_OR_time':
+BLE_tot_OR_time
+118.00    3
+170.00    3
+155.00    3
+210.00    3
+225.00    2
+         ..
+197.00    1
+203.30    1
+203.98    1
+204.00    1
+850.00    1
+Name: count, Length: 172, dtype: int64
+
+Number of null values:
+Codice alfa numerico     0
+Età                     0
+Peso                     0
+Altezza                  0
+BMI                      0
+                        ..
+LATERALITA_DESTRA        0
+LATERALITA_BILATERALE    0
+DIABETE_MELLITO_2        0
+DIABETE_MELLITO_1        0
+PROCEDURE_TOTALI         0
+Length: 63, dtype: int64

@@ -19,6 +19,20 @@ dfTrain = pd.read_csv('MLMED_Dataset_train.csv')
 dfTest = pd.read_csv('ML_MED_Dataset_test.csv')
 dfValidation= pd.read_csv('ML_MED_Dataset_validation.csv')
 
+# Get column names that contain the word 'tempo'
+columns_with_tempo = [col for col in dfTrain.columns if 'time' in col]
+
+# Print the column names
+print(columns_with_tempo)
+
+# Drop the columns 'BLE_tot_BO_time' and 'BLE_tot_RR_time' from the DataFrame
+dfTrain = dfTrain.drop(['BLE_tot_BO_time', 'BLE_tot_RR_time', 'Tempo Tot BO Ormaweb', 'Tempo Tot. SO OrmaWeb','Tempo Tot. RR', 'LATERALITA_BILATERALE','MALLAMPATI_4.0', 'TORACOSCOPIA','MIVAR'], axis=1)
+
+dfTest = dfTest.drop(['BLE_tot_BO_time', 'BLE_tot_RR_time', 'Tempo Tot BO Ormaweb', 'Tempo Tot. SO OrmaWeb','Tempo Tot. RR', 'LATERALITA_BILATERALE', 'MALLAMPATI_4.0', 'TORACOSCOPIA','MIVAR'], axis=1)
+
+
+dfValidation = dfValidation.drop(['BLE_tot_BO_time', 'BLE_tot_RR_time', 'Tempo Tot BO Ormaweb', 'Tempo Tot. SO OrmaWeb','Tempo Tot. RR', 'LATERALITA_BILATERALE','MALLAMPATI_4.0', 'TORACOSCOPIA','MIVAR'], axis=1)
+
 # The above code is using the LabelEncoder class from the scikit-learn library to encode categorical
 # variables in three different dataframes: dfTrain, dfTest, and dfValidation. It loops through each
 # column in each dataframe and checks if the column's data type is 'object', indicating that it is a
@@ -132,9 +146,6 @@ rf_model.fit(x_train, y_train)
 rf_predictions = rf_model.predict(x_train)
 mae_rf = mean_absolute_error(y_train, rf_predictions)
 print("Mean Absolute Error:", mae_rf)
-# The above code is calculating the mean absolute error (MAE) between the predicted values (y_pred)
-# and the actual values (y_test) using a random forest model (rf_model). The calculated MAE is then
-# printed to the console.
 y_pred = rf_model.predict(x_test)
 mae_rf2 = mean_absolute_error(y_test, y_pred)
 print("Mean Absolute Error:", mae_rf2)
@@ -173,7 +184,7 @@ from keras.callbacks import EarlyStopping,ReduceLROnPlateau
 
 # The above code is creating a neural network model using the Keras library in Python.
 nn_model = Sequential()
-nn_model.add(Dense(100, input_shape=(62,), activation='relu'))
+nn_model.add(Dense(100, input_shape=(53,), activation='relu'))
 nn_model.add(Dense(100, activation='relu'))
 nn_model.add(Dense(1, activation='linear'))
 
@@ -206,7 +217,7 @@ lr_scheduler = ReduceLROnPlateau(monitor='val_loss', factor=0.1, patience=5, ver
 history = nn_model.fit(x_train, y_train, validation_data=(x_val, y_val), epochs=100, batch_size=50, callbacks=[early_stopping, lr_scheduler])
 # Evaluate the model
 scores = nn_model.evaluate(x_test, y_test)
-print("Mean Absolute Error: ", scores[1])
+print("Mean Absolute Error:", scores[1])
 
 ###kfold cross validation###
 
