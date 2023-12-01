@@ -26,12 +26,17 @@ columns_with_tempo = [col for col in dfTrain.columns if 'time' in col]
 print(columns_with_tempo)
 
 # Drop the columns 'BLE_tot_BO_time' and 'BLE_tot_RR_time' from the DataFrame
-dfTrain = dfTrain.drop(['BLE_tot_BO_time', 'BLE_tot_RR_time', 'Tempo Tot BO Ormaweb', 'Tempo Tot. SO OrmaWeb','Tempo Tot. RR', 'LATERALITA_BILATERALE','MALLAMPATI_4.0', 'TORACOSCOPIA','MIVAR'], axis=1)
+dfTrain = dfTrain.drop(['BLE_tot_BO_time', 'BLE_tot_RR_time', 'Tempo Tot BO Ormaweb', 'Tempo Tot. SO OrmaWeb','Tempo Tot. RR', 'LATERALITA_BILATERALE','MALLAMPATI_4.0', 'TORACOSCOPIA','MIVAR', 'PERCUTANEO','OSAS', 'ENDOSCOPIA', 
+                        'Antipertensivi', 'Insulina', 'Reintervento', 'Fumo', 'CVC', 'BPCO', 'feasible', 'TIGO', 'Anticoagulanti', 'Pregresso TIA', 'Codice alfa numerico'], axis=1)
 
-dfTest = dfTest.drop(['BLE_tot_BO_time', 'BLE_tot_RR_time', 'Tempo Tot BO Ormaweb', 'Tempo Tot. SO OrmaWeb','Tempo Tot. RR', 'LATERALITA_BILATERALE', 'MALLAMPATI_4.0', 'TORACOSCOPIA','MIVAR'], axis=1)
+dfTest = dfTest.drop(['BLE_tot_BO_time', 'BLE_tot_RR_time', 'Tempo Tot BO Ormaweb', 'Tempo Tot. SO OrmaWeb','Tempo Tot. RR', 'LATERALITA_BILATERALE', 'MALLAMPATI_4.0', 
+                      'TORACOSCOPIA','MIVAR','PERCUTANEO','OSAS','ENDOSCOPIA', 'Antipertensivi','Insulina', 'Reintervento','Fumo', 'CVC', 'BPCO', 'feasible', 'TIGO'
+                      , 'Anticoagulanti', 'Pregresso TIA', 'Codice alfa numerico'], axis=1)
 
 
-dfValidation = dfValidation.drop(['BLE_tot_BO_time', 'BLE_tot_RR_time', 'Tempo Tot BO Ormaweb', 'Tempo Tot. SO OrmaWeb','Tempo Tot. RR', 'LATERALITA_BILATERALE','MALLAMPATI_4.0', 'TORACOSCOPIA','MIVAR'], axis=1)
+dfValidation = dfValidation.drop(['BLE_tot_BO_time', 'BLE_tot_RR_time', 'Tempo Tot BO Ormaweb', 'Tempo Tot. SO OrmaWeb','Tempo Tot. RR',
+                                  'LATERALITA_BILATERALE','MALLAMPATI_4.0', 'TORACOSCOPIA','MIVAR', 'PERCUTANEO','OSAS', 'ENDOSCOPIA', 
+                                  'Antipertensivi', 'Insulina', 'Reintervento', 'Fumo', 'CVC', 'BPCO', 'feasible', 'TIGO', 'Anticoagulanti', 'Pregresso TIA', 'Codice alfa numerico'], axis=1)
 
 # The above code is using the LabelEncoder class from the scikit-learn library to encode categorical
 # variables in three different dataframes: dfTrain, dfTest, and dfValidation. It loops through each
@@ -87,10 +92,12 @@ xgpred = xgb_model.fit(x_train, y_train,
 # The above code is calculating the best iteration of an XGBoost model, making predictions on a
 # validation dataset, and calculating the mean absolute error (MAE) between the predictions and the
 # actual values.
+from sklearn.metrics import mean_squared_error
+
 best_iteration = xgb_model.best_iteration
 predictions_1 = xgb_model.predict(x_val)
-mae_1 = mean_absolute_error(predictions_1, y_val)
-print("Mean Absolute Error:" , mae_1)
+rmse_1 = np.sqrt(mean_squared_error(y_val, predictions_1, squared=False))
+print("Root Mean Squared Error", rmse_1)
 
 
 #IMPORTANT: The hyperparament search code is commented out for computational reasons,
@@ -134,21 +141,19 @@ rf_model = RandomForestRegressor(bootstrap= True,
                                  min_samples_leaf= 3,
                                  min_samples_split= 2, 
                                  n_estimators= 100)
-
-#best parameters:  {'bootstrap': True, 'max_depth': 90, 'max_features': None, 'min_samples_leaf': 3, 'min_samples_split': 2, 'n_estimators': 100}
 # Fit on training data
 rf_model.fit(x_train, y_train)
 
-
-# The above code is calculating the mean absolute error (MAE) of the predictions made by
-# forest model (rf_model) on the training data (x_train) compared to the actual target values
-# (y_train). The calculated MAE is then printed to the console.
+# Actual class predictions
+#training accuracy 
 rf_predictions = rf_model.predict(x_train)
-mae_rf = mean_absolute_error(y_train, rf_predictions)
-print("Mean Absolute Error:", mae_rf)
+rmse_train = np.sqrt(mean_squared_error(y_train, rf_predictions))
+print("Root Mean Squared Error (Train):", rmse_train)
+
+#testing accuracy
 y_pred = rf_model.predict(x_test)
-mae_rf2 = mean_absolute_error(y_test, y_pred)
-print("Mean Absolute Error:", mae_rf2)
+rmse_test = np.sqrt(mean_squared_error(y_test, y_pred))
+print("Root Mean Squared Error (Test):", rmse_test)
 
 
 #IMPORTANT: The hyperparament search code is commented out for computational reasons,
@@ -182,19 +187,25 @@ import numpy as np
 import tensorflow as tf
 from keras.callbacks import EarlyStopping,ReduceLROnPlateau
 
-# The above code is creating a neural network model using the Keras library in Python.
+
+from keras import backend as K
+
+# Define RMSE
+def root_mean_squared_error(y_true, y_pred):
+    return K.sqrt(K.mean(K.square(y_pred - y_true))) 
+
+# Define the model
 nn_model = Sequential()
-nn_model.add(Dense(100, input_shape=(53,), activation='relu'))
+nn_model.add(Dense(100, input_shape=(39,), activation='relu'))
 nn_model.add(Dense(100, activation='relu'))
+nn_model.add(Dense(100, activation='relu'))  # Added layer
+nn_model.add(Dense(100, activation='relu'))  # Added layer
 nn_model.add(Dense(1, activation='linear'))
 
+# Compile the model
+nn_model.compile(loss=root_mean_squared_error, optimizer='adam', metrics=[root_mean_squared_error])
 
-# The above code is compiling a neural network model in Python. It is specifying the loss function as
-# mean absolute error, the optimizer as Adam, and the metric to evaluate the model as mean absolute
-# error.
-nn_model.compile(loss='mean_absolute_error', optimizer='adam', metrics=['mean_absolute_error'])
-# The above code is converting the data arrays `x_train`, `y_train`, `x_val`, `y_val`, `x_test`, and
-# `y_test` into TensorFlow tensors with a data type of `float32`.
+# Convert data to tensors
 x_train = tf.convert_to_tensor(x_train, dtype=tf.float32)
 y_train = tf.convert_to_tensor(y_train, dtype=tf.float32)
 x_val = tf.convert_to_tensor(x_val, dtype=tf.float32)
@@ -202,22 +213,16 @@ y_val = tf.convert_to_tensor(y_val, dtype=tf.float32)
 x_test = tf.convert_to_tensor(x_test, dtype=tf.float32)
 y_test = tf.convert_to_tensor(y_test, dtype=tf.float32)
 
-
-# The above code is creating an instance of the EarlyStopping callback class in Python. This callback
-# is commonly used in machine learning models to stop training early if a certain condition is met.
+# Define callbacks
 early_stopping = EarlyStopping(monitor='val_loss', patience=10, verbose=1, mode='min', restore_best_weights=True)
-# The above code is creating a learning rate scheduler object using the ReduceLROnPlateau class from
-# the Keras library. This scheduler is used to dynamically adjust the learning rate during training
-# based on the validation loss.
 lr_scheduler = ReduceLROnPlateau(monitor='val_loss', factor=0.1, patience=5, verbose=1, mode='min', min_lr=1e-6)
-# The above code is training a neural network model using the fit() function. It takes in the training
-# data (x_train and y_train) and validation data (x_val and y_val) as inputs. The model is trained for
-# 100 epochs with a batch size of 50. It also includes callbacks, such as early stopping and learning
-# rate scheduler, which are used to monitor the training process and make adjustments accordingly.
+
+# Train the model
 history = nn_model.fit(x_train, y_train, validation_data=(x_val, y_val), epochs=100, batch_size=50, callbacks=[early_stopping, lr_scheduler])
+
 # Evaluate the model
 scores = nn_model.evaluate(x_test, y_test)
-print("Mean Absolute Error:", scores[1])
+print("RMSE:", scores[1])
 
 ###kfold cross validation###
 
@@ -239,11 +244,13 @@ y_train = pd.DataFrame(y_train.numpy())
 models = [xgb_model, rf_model, nn_model]
 
 # Loop over the models
+
+
 for model in models:
     model_name = model.__class__.__name__  # Get the name of the model
 
     # List to save the results of cross-validation
-    mae_scores = []
+    rmse_scores = []
 
     # Loop over the folds
     for train_index, test_index in kf.split(x_train):
@@ -256,13 +263,13 @@ for model in models:
         # Make predictions
         predictions = model.predict(x_test_fold)
 
-        # Calculate the MAE
-        mae = mean_absolute_error(y_test_fold, predictions)
-        mae_scores.append(mae)
+        # Calculate the RMSE
+        rmse = np.sqrt(mean_squared_error(y_test_fold, predictions))
+        rmse_scores.append(rmse)
 
-    # Calculate the mean MAE over all folds
-    avg_mae = np.mean(mae_scores)
-    print(f"{model_name} - Mean Absolute Error: {avg_mae}")
+    # Calculate the mean RMSE over all folds
+    avg_rmse = np.mean(rmse_scores)
+    print(f"{model_name} - Root Mean Squared Error: {avg_rmse}")
     
 
     
@@ -284,13 +291,13 @@ def train_and_evaluate(model, x_train, y_train, x_val, y_val, feature_indices=No
     # the training data (x_train). It then calculates the mean absolute error (mean_score) between the
     # actual target variable values (y_train) and the predicted values (y_train_pred).
     y_train_pred = model.predict(x_train)
-    mean_score = mean_absolute_error(y_train, y_train_pred)
+    R_mean_score = np.sqrt(mean_squared_error(y_train, y_train_pred))
 
     # Evaluate the model on the validation data
     y_val_pred = model.predict(x_val)
-    test_score = mean_absolute_error(y_val, y_val_pred)
+    sqrt_test_score = np.sqrt(mean_squared_error(y_val, y_val_pred))
 
-    return mean_score, test_score
+    return R_mean_score, sqrt_test_score
 
 
 import numpy as np
@@ -352,10 +359,12 @@ x_test_selected = tf.gather(x_test, selected_indices, axis=1)
 nn_model_selected = Sequential()
 nn_model_selected.add(Dense(100, input_shape=(len(selected_indices),), activation='relu'))
 nn_model_selected.add(Dense(100, activation='relu'))
+nn_model_selected.add(Dense(100, activation='relu'))  # Added layer
+nn_model_selected.add(Dense(100, activation='relu'))  # Added layer
 nn_model_selected.add(Dense(1, activation='linear'))
 
 
-nn_model_selected.compile(loss='mean_absolute_error', optimizer='adam', metrics=['mean_absolute_error'])
+nn_model_selected.compile(loss=root_mean_squared_error, optimizer='adam', metrics=[root_mean_squared_error])
 
 
 # The above code is converting the numpy arrays `x_train_selected`, `x_val_selected`, and
@@ -378,7 +387,7 @@ history_selected = nn_model_selected.fit(x_train_selected_tensor, y_train, valid
 # metrics. The code then prints the mean absolute error (MAE) of the model's predictions using the new
 # features.
 scores_selected = nn_model_selected.evaluate(x_test_selected_tensor, y_test)
-print("Mean Absolute Error con le nuove features: ", scores_selected[1])
+print("Mean SQRT Error con le nuove features: ", scores_selected[1])
 
 # The above code is plotting the training and validation loss for two different sets of features. It
 # is comparing the loss for the original set of features and a new set of features. The code uses the
